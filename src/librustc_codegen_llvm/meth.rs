@@ -87,6 +87,10 @@ pub fn get_vtable(
     let nullptr = C_null(Type::i8p(cx));
 
     let (size, align) = cx.size_and_align_of(ty);
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // If you touch this code, be sure to also make the corresponding changes to
+    // `get_vtable` in rust_mir/interpret/traits.rs
+    // /////////////////////////////////////////////////////////////////////////////////////////////
     let mut components: Vec<_> = [
         callee::get_fn(cx, monomorphize::resolve_drop_in_place(cx.tcx, ty)),
         C_usize(cx, size.bytes()),
@@ -97,8 +101,8 @@ pub fn get_vtable(
         let trait_ref = trait_ref.with_self_ty(tcx, ty);
         let methods = tcx.vtable_methods(trait_ref);
         let methods = methods.iter().cloned().map(|opt_mth| {
-            opt_mth.map_or(nullptr, |(def_id, substs)| {
-                callee::resolve_and_get_fn(cx, def_id, substs)
+            opt_mth.map_or(nullptr, |instance| {
+                callee::get_fn(cx, instance)
             })
         });
         components.extend(methods);
