@@ -48,6 +48,10 @@ impl<'a, 'mir, 'tcx, M: Machine<'a, 'mir, 'tcx>> EvalContext<'a, 'mir, 'tcx, M> 
 
         let ptr_size = self.pointer_size();
         let ptr_align = self.tcx.data_layout.pointer_align;
+        // /////////////////////////////////////////////////////////////////////////////////////////
+        // If you touch this code, be sure to also make the corresponding changes to
+        // `get_vtable` in rust_codegen_llvm/meth.rs
+        // /////////////////////////////////////////////////////////////////////////////////////////
         let vtable = self.memory.allocate(
             ptr_size * (3 + methods.as_ref().map_or(0, |m| m.len() as u64)),
             ptr_align,
