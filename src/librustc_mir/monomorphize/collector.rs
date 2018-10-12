@@ -914,11 +914,6 @@ fn create_mono_items_for_vtable_methods<'a, 'tcx>(tcx: TyCtxt<'a, 'tcx, 'tcx>,
             // Walk all methods of the trait, including those of its supertraits
             let methods = tcx.vtable_methods(poly_trait_ref);
             let methods = methods.iter().cloned().filter_map(|method| method)
-                .map(|(def_id, substs)| ty::Instance::resolve(
-                        tcx,
-                        ty::ParamEnv::reveal_all(),
-                        def_id,
-                        substs).unwrap())
                 .filter(|&instance| should_monomorphize_locally(tcx, &instance))
                 .map(|instance| create_fn_mono_item(instance));
             output.extend(methods);

@@ -354,8 +354,10 @@ define_queries! { <'tcx>
     },
 
     Other {
+        /// List of methods on a vtable. The final vtable won't have holes where `None`, but will
+        /// simply skip methods that aren't object safe
         [] fn vtable_methods: vtable_methods_node(ty::PolyTraitRef<'tcx>)
-                            -> Lrc<Vec<Option<(DefId, &'tcx Substs<'tcx>)>>>,
+                            -> Lrc<Vec<Option<ty::Instance<'tcx>>>>,
     },
 
     Codegen {

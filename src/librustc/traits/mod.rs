@@ -896,7 +896,7 @@ fn substitute_normalize_and_test_predicates<'a, 'tcx>(tcx: TyCtxt<'a, 'tcx, 'tcx
 fn vtable_methods<'a, 'tcx>(
     tcx: TyCtxt<'a, 'tcx, 'tcx>,
     trait_ref: ty::PolyTraitRef<'tcx>)
-    -> Lrc<Vec<Option<(DefId, &'tcx Substs<'tcx>)>>>
+    -> Lrc<Vec<Option<ty::Instance<'tcx>>>>
 {
     debug!("vtable_methods({:?})", trait_ref);
 
@@ -947,8 +947,12 @@ fn vtable_methods<'a, 'tcx>(
                     debug!("vtable_methods: predicates do not hold");
                     return None;
                 }
-
-                Some((def_id, substs))
+                Some(ty::Instance::resolve(
+                    tcx,
+                    ty::ParamEnv::reveal_all(),
+                    def_id,
+                    substs,
+                ).unwrap())
             })
         }).collect()
     )

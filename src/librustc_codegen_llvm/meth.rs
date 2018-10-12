@@ -97,8 +97,8 @@ pub fn get_vtable(
         let trait_ref = trait_ref.with_self_ty(tcx, ty);
         let methods = tcx.vtable_methods(trait_ref);
         let methods = methods.iter().cloned().map(|opt_mth| {
-            opt_mth.map_or(nullptr, |(def_id, substs)| {
-                callee::resolve_and_get_fn(cx, def_id, substs)
+            opt_mth.map_or(nullptr, |instance| {
+                callee::get_fn(cx, instance)
             })
         });
         components.extend(methods);

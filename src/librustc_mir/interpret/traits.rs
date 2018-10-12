@@ -66,8 +66,7 @@ impl<'a, 'mir, 'tcx, M: Machine<'a, 'mir, 'tcx>> EvalContext<'a, 'mir, 'tcx, M> 
 
         if let Some(methods) = methods {
             for (i, method) in methods.iter().enumerate() {
-                if let Some((def_id, substs)) = *method {
-                    let instance = self.resolve(def_id, substs)?;
+                if let Some(instance) = *method {
                     let fn_ptr = self.memory.create_fn_alloc(instance);
                     let method_ptr = vtable.offset(ptr_size * (3 + i as u64), &self)?;
                     self.memory.write_ptr_sized(method_ptr, ptr_align, Scalar::Ptr(fn_ptr).into())?;
